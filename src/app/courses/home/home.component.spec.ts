@@ -29,7 +29,7 @@ describe('HomeComponent', () => {
   const advancedCourses = setupCourses()
     .filter(course => course.category == "ADVANCED");
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
 
     const coursesServiceSpy = jasmine.createSpyObj('CoursesService', ['findAllCourses']);
 
