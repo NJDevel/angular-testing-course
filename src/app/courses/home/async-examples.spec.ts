@@ -1,5 +1,6 @@
 import { fakeAsync, flush, flushMicrotasks, tick } from "@angular/core/testing";
-import { fake } from "cypress/types/sinon";
+import { of } from "rxjs";
+import { delay } from "rxjs/operators";
 
 
 fdescribe("Async Testing Examples", () => {
@@ -35,7 +36,7 @@ fdescribe("Async Testing Examples", () => {
         expect(test).toBeTruthy();
     }));
 
-    it("Asynchronous test example - plain Promis", fakeAsync(() => {
+    it("Asynchronous test example - plain Promise", fakeAsync(() => {
         let test = false;
 
         console.log("Creating Promise");
@@ -84,5 +85,25 @@ fdescribe("Async Testing Examples", () => {
         flush(1000);
 
         expect(counter).toBe(11);
+    }));
+
+    it("Aynchronous test example - Observables", fakeAsync(() => {
+        let test = false;
+
+        console.log('Creating observable');
+
+        const test$ = of(test)
+            .pipe(delay(1000));
+
+        test$.subscribe(() => {
+            test = true;
+        });
+
+        console.log("Running assertions");
+
+        tick(1000);
+
+        expect(test).toBe(true);
+        
     }));
 });
