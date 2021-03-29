@@ -105,23 +105,19 @@ describe('HomeComponent', () => {
 
     const tabs = el.queryAll(By.css(".mat-tab-label"));
 
-    el.nativeElement.click(tabs[1]);
+    // el.nativeElement.click(tabs[1]);
 
-    // click(tabs[1]);
+    click(tabs[1]);
 
     fixture.detectChanges();
 
-    setTimeout(() => {
-
-      const cardTitles = el.queryAll(By.css('.mat-card-title'));
-
-      expect(cardTitles.length).toBeGreaterThan(0, "Could not find card titles");
-
-      expect(cardTitles[0].nativeElement.textContent).toContain("Angular Security Course");
-
-    }, 1000);
-
     flush();
+
+    const cardTitles = el.queryAll(By.css('.mat-tab-body-active .mat-card-title'));
+
+    expect(cardTitles.length).toBeGreaterThan(0, "Could not find card titles");
+
+    expect(cardTitles[0].nativeElement.textContent).toContain("Angular Security Course");
 
   }));
 
