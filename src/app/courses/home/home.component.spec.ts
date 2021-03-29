@@ -1,4 +1,4 @@
-import {async, ComponentFixture, fakeAsync, flush, flushMicrotasks, TestBed} from '@angular/core/testing';
+import {async, ComponentFixture, fakeAsync, flush, flushMicrotasks, TestBed, tick} from '@angular/core/testing';
 import {CoursesModule} from '../courses.module';
 import {DebugElement} from '@angular/core';
 
@@ -25,6 +25,9 @@ describe('HomeComponent', () => {
 
   const beginnerCourses = setupCourses()
     .filter(course => course.category == "BEGINNER");
+
+  const advancedCourses = setupCourses()
+    .filter(course => course.category == "ADVANCED");
 
   beforeEach(async(() => {
 
@@ -70,23 +73,57 @@ describe('HomeComponent', () => {
 
   it("should display only advanced courses", () => {
 
-      pending();
+      coursesService.findAllCourses.and.returnValue(of(advancedCourses));
+
+      fixture.detectChanges();
+
+      const tabs = el.queryAll(By.css(".mat-tab-label"));
+
+      expect(tabs.length).toBe(1, "Unexpected number of tabs found");
 
   });
 
 
   it("should display both tabs", () => {
 
-    pending();
+    coursesService.findAllCourses.and.returnValue(of(setupCourses()));
+
+    fixture.detectChanges();
+
+    const tabs = el.queryAll(By.css(".mat-tab-label"));
+
+    expect(tabs.length).toBe(2, "Expected to find 2 courses tabs");
 
   });
 
 
-  it("should display advanced courses when tab clicked", () => {
+  it("should display advanced courses when tab clicked", fakeAsync(() => {
 
-    pending();
+    coursesService.findAllCourses.and.returnValue(of(setupCourses()));
 
-  });
+    fixture.detectChanges();
+
+    const tabs = el.queryAll(By.css(".mat-tab-label"));
+
+    el.nativeElement.click(tabs[1]);
+
+    // click(tabs[1]);
+
+    fixture.detectChanges();
+
+    setTimeout(() => {
+
+      const cardTitles = el.queryAll(By.css('.mat-card-title'));
+
+      expect(cardTitles.length).toBeGreaterThan(0, "Could not find card titles");
+
+      expect(cardTitles[0].nativeElement.textContent).toContain("Angular Security Course");
+
+    }, 1000);
+
+    flush();
+
+  }));
 
 });
 
