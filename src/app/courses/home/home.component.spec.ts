@@ -1,4 +1,4 @@
-import {async, ComponentFixture, fakeAsync, flush, flushMicrotasks, TestBed, tick} from '@angular/core/testing';
+import {async, ComponentFixture, fakeAsync, flush, flushMicrotasks, TestBed, tick, waitForAsync} from '@angular/core/testing';
 import {CoursesModule} from '../courses.module';
 import {DebugElement} from '@angular/core';
 
@@ -97,7 +97,7 @@ describe('HomeComponent', () => {
   });
 
 
-  it("should display advanced courses when tab clicked", fakeAsync(() => {
+  it("should display advanced courses when tab clicked -fakeAync", fakeAsync(() => {
 
     coursesService.findAllCourses.and.returnValue(of(setupCourses()));
 
@@ -118,6 +118,35 @@ describe('HomeComponent', () => {
     expect(cardTitles.length).toBeGreaterThan(0, "Could not find card titles");
 
     expect(cardTitles[0].nativeElement.textContent).toContain("Angular Security Course");
+
+  }));
+
+  it("should display advanced courses when tab clicked -waitForAync", waitForAsync(() => {
+
+    coursesService.findAllCourses.and.returnValue(of(setupCourses()));
+
+    fixture.detectChanges();
+
+    const tabs = el.queryAll(By.css(".mat-tab-label"));
+
+    // Does not work
+    // el.nativeElement.click(tabs[1]);
+
+    click(tabs[1]);
+
+    fixture.detectChanges();
+
+    fixture.whenStable()
+      .then(() => {
+
+        console.log("called whenStable()");
+        
+        const cardTitles = el.queryAll(By.css('.mat-tab-body-active .mat-card-title'));
+
+        expect(cardTitles.length).toBeGreaterThan(0, "Could not find card titles");
+    
+        expect(cardTitles[0].nativeElement.textContent).toContain("Angular Security Course");
+      });
 
   }));
 
